@@ -2,9 +2,218 @@
 title: "martah_OriginalHomeworkCode_03"
 author: "Marta"
 date: "10/1/2021"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cerulean 
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(curl)
+library(ggplot2)
 ```
+
+Populating in the csv file
+```{r csv}
+x<- curl('https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall21/zombies.csv')
+zombies <- read.csv(x, header=TRUE, stringsAsFactors = FALSE)
+head(zombies)
+summary(zombies) #just checking out the data, looks like everything is all loaded in!
+```
+
+## Pop Mean and SD
+
+_Calculate the population mean and standard deviation for each quantitative random variable (height, weight, age, number of zombies killed, and years of education). NOTE: You will not want to use the built in var() and sd() commands as these are for samples._
+
+I'm a little confused why we can't use the base commands but I checked in with Mod 7 which went over mean and sd. Geometric mean is better for comparing means of different units so since we're just doing one at a time i'll stick with harmonic.
+
+```{r means}
+mean(zombies$height)
+mean(zombies$weight)
+mean(zombies$age)
+mean(zombies$zombies_killed)
+mean(zombies$years_of_education)#i'm going through and individual doing each mean but i would like to run them all at the same time.
+```
+Now for sd I think I have to do the variance first because running the code for just the sd function doesn't work??
+
+```{r sd setup}
+variance <- function(x) {
+    sum((x - mean(x))^2)/(length(x))
+} #this is setting up the variance function outside of the sd function so i can slim down the second function
+sd <- function(x) {
+    sqrt(variance(x))
+}
+```
+
+```{r sd}
+sd(zombies$height)
+sd(zombies$weight)
+sd(zombies$age)
+sd(zombies$zombies_killed)
+sd(zombies$years_of_education)
+```
+I have trouble figuring out what magnitude we should be in? So I can't tell if these values are too high or too low.
+
+## GGPlot Boxplots
+
+_Use {ggplot} to make boxplots of each of these variables by gender._
+
+```{r gender}
+male <- zombies[grep("Male", zombies$gender), ]
+head(male)#I'm just creating two new data frames with just the male and female values
+female <- zombies[grep("Female", zombies$gender), ]
+head(female)
+```
+
+I ended up not using this lmao cause I spent too long trying to turn these into graphs and then i realized its each mean and sd, not the combined means and sds for each gender group _but i also though it was cool so i kept it here just to look at lmao_
+```{r ggplot}
+par(mfrow = c(2, 3)) #I would really like to be able to view all my graphs next to each other but this isn't working, am I missing something?
+gender_height<- ggplot(data = zombies, aes(x = gender, y = height)) + geom_boxplot() + labs( x = "Gender", y = "Height",
+title ="Gender Comparative Height",)
+
+gender_weight<- ggplot(data = zombies, aes(x = gender, y = weight)) + geom_boxplot() 
+
+gender_age<- ggplot(data = zombies, aes(x = gender, y = age)) + geom_boxplot() 
+
+gender_zombies_killed<- ggplot(data = zombies, aes(x = gender, y = zombies_killed)) + geom_boxplot() 
+
+gender_education<- ggplot(data = zombies, aes(x = gender, y = years_of_education)) + geom_boxplot() 
+
+gender_height
+gender_weight
+gender_age
+gender_zombies_killed
+gender_education
+```
+
+I literally just copy pasted from he ggplot cheat sheet so I'm not sure if my syntax is correct?? The `+` between arguments really throws me off.
+
+## GGPlot Scatterplots
+
+_Use {ggplot} to make scatterplots of height and weight in relation to age. Do these variables seem to be related? In what way?_
+
+```{r scatter}
+height_age <- ggplot(data = zombies, aes(x = height, y = age)) + geom_point()
+height_age
+
+weight_age <- ggplot(data = zombies, aes(x = weight, y = age)) + geom_point()
+weight_age #gonna be real here i used point instead of jitter because there were no other values to put in for point so if jitter makes more sense i need help identifying 'area'
+```
+  
+Height and age certainly have a correlation with height increasing with age. However, 
+it appears that weight is highly variable among all ages.
+
+## Q-Q Plots
+
+_Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not (hint: not all are drawn from the normal distribution)? For those that are not normal, can you determine from which common distribution they are drawn?_
+
+I think the best approach is to go variable by variable and create a histogram and a qqplot
+
+```{r qq height}
+par(mfrow = c(1, 2))# I could not figure out how else to view the histogram
+hist(zombies$height, freq = F, probability = T) #Frequency and probability are included in histograms in the modules so i included them here but i don't see their point
+qqnorm(zombies$height)
+qqline(zombies$height)
+```
+
+Looks like normal distribution for height.
+
+```{r qq weight}
+par(mfrow = c(1, 2))# I could not figure out how else to view the histogram
+hist(zombies$weight, freq = F, probability = T) #Frequency and probability are included in histograms in the modules so i included them here but i don't see their point
+qqnorm(zombies$weight)
+qqline(zombies$weight)
+```
+
+Looks like normal distribution for weight.
+
+```{r qq age}
+par(mfrow = c(1, 2))# I could not figure out how else to view the histogram
+hist(zombies$age, freq = F, probability = T) #Frequency and probability are included in histograms in the modules so i included them here but i don't see their point
+qqnorm(zombies$age)
+qqline(zombies$age)
+```
+
+Looks like normal distribution for age.
+
+```{r qq education}
+par(mfrow = c(1, 2))# I could not figure out how else to view the histogram
+hist(zombies$years_of_education, freq = F, probability = T) #Frequency and probability are included in histograms in the modules so i included them here but i don't see their point
+qqnorm(zombies$years_of_education)
+qqline(zombies$years_of_education)
+```
+
+Non-normal distribution for education.
+
+```{r qq zoms killed}
+par(mfrow = c(1, 2))# I could not figure out how else to view the histogram
+hist(zombies$zombies_killed, freq = F, probability = T) #Frequency and probability are included in histograms in the modules so i included them here but i don't see their point
+qqnorm(zombies$zombies_killed)
+qqline(zombies$zombies_killed)
+```
+
+Non-normal distribution for education.
+
+For the two non-normal q-q plot distribution I was very lost, I'm not sure how to determine the distribution based on only knowing it is not normal if that makes sense. I would guess Poisson for both since that is used for counting. For the zombies killed I can also see it being Bernoulli since the variable is either killed or not killed. I am fairly confident the both are considered cumulative however. 
+
+## One Set of 30
+
+_Now use the sample() function to sample ONE subset of 30 zombie survivors (without replacement) from this population and calculate the mean and sample standard deviation for each variable. Also estimate the standard error for each variable, and construct the 95% confidence interval for each mean. Note that for the variables that are not drawn from the normal distribution, you may need to base your estimate of the CIs on slightly different code than for the normal…_
+
+```{r sample}
+set.seed(1)
+sample1<- sample(zombies$id, size = 30, replace = FALSE)
+sample1 #This just returns the id instead of the whole row
+```
+
+`group <- zombies[grep(group1, zombies$id), ]` I also tried this which did not work because grep is for characters but I think if I knew the function to replace grep this would be closer
+
+```{r moving on mean}
+group1<- zombies[sample1, ]#I'm manually going to overwrite and populate this just cause idk how else to fix the top which i think means i can do `group1<- zombies[sample(zombies$id, size = 30, replace = false)]`
+group1
+mean(group1$height)
+mean(group1$weight)
+mean(group1$age)
+mean(group1$zombies_killed)
+mean(group1$years_of_education)
+```
+
+```{r sd for sample}
+sd(group1$height)
+sd(group1$weight)
+sd(group1$age)
+sd(group1$zombies_killed)
+sd(group1$years_of_education)
+```
+This is were it gets very confusing I thought the CIs were fairly stable as in they didn't really change so idk how to calculate what I think would be new alpha values?
+
+## One Hundred Sets of 30
+
+_Now draw 99 more random samples of 30 zombie apocalypse survivors, and calculate the mean for each variable for each of these samples. Together with the first sample you drew, you now have a set of 100 means for each variable (each based on 30 observations), which constitutes a sampling distribution for each variable. What are the means and standard deviations of this distribution of means for each variable? How do the standard deviations of means compare to the standard errors estimated in [5]? What do these sampling distributions look like (a graph might help here)? Are they normally distributed? What about for those variables that you concluded were not originally drawn from a normal distribution?_
+
+```{r for looooooop}
+set.seed(1)
+k <- 99  # number of samples
+n <- 30  # size of each sample
+s <- NULL  # dummy variable to hold each sample, can i add my own sample in here to add the first group?
+for (i in 1:k) {
+    s[[i]] <- zombies[sample(zombies$id, size = n, replace = FALSE), ]
+}
+s[[100]]<- group1 #lmao this seems too easy i definitely think its wrong
+head(s) #fun fact i originally just ran `s` and almost crashed my program
+s[[100]] #ok this works but i think there's another way because then these values were replaced and maybe picked again in the sampling
+```
+
+## Challenges
+
+1. I had trouble viewing some of my data the way I wanted to. Some of the graphs I wanted plotted together with `par` which didn't always work. Also in a couple spots like at the top with mean I wanted to calculate all my variables at once and have it return different values but it did not like that.
+
+2. I am really unsure how to determine the type of distribution just going off the q-q plot. I understand how it shows that the distribution is non-normal but when it come to determining type, is there a q-q plot equivalent for each type of distribution?
+
+3. For the ggplots I was just picking ones that didn't require extra information so I'm not sure if they are the est suited, but I don' really understand the extra arguments for some of the geom_functions.
+
+4. For picking a group I was really confused on how to get all of the columns included, I'm stuck with just going with `x = zombies$id` which just gave me a vector of integers. How can I sample the whole row?
+
+5. The for loooooooooooooops :,( ok honestly not hat bad I put this here preemptivly thinking they would be harder lol. However, idk how to put in my own sample and enforce the replace = f because there's a good chance those people were picked again during the for loop since I put them in after replace = false. If I put it group1 first and have `i in 2:k` where k = 100 would that work?
