@@ -8,6 +8,7 @@ output:
     toc_float: true
     theme: cerulean 
 ---
+## Setup
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -216,4 +217,4 @@ s[[100]] #ok this works but i think there's another way because then these value
 
 4. For picking a group I was really confused on how to get all of the columns included, I'm stuck with just going with `x = zombies$id` which just gave me a vector of integers. How can I sample the whole row?
 
-5. The for loooooooooooooops :,( ok honestly not hat bad I put this here preemptivly thinking they would be harder lol. However, idk how to put in my own sample and enforce the replace = f because there's a good chance those people were picked again during the for loop since I put them in after replace = false. If I put it group1 first and have `i in 2:k` where k = 100 would that work?
+5. The for loooooooooooooops :,( ok honestly not hat bad I put this here preemptively thinking they would be harder lol. However, idk how to put in my own sample and enforce the replace = f because there's a good chance those people were picked again during the for loop since I put them in after replace = false. If I put it group1 first and have `i in 2:k` where k = 100 would that work?
