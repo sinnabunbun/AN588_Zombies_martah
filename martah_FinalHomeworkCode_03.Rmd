@@ -57,6 +57,8 @@ pop.sd(zombies$zombies_killed)
 pop.sd(zombies$years_of_education)
 ```
 
+*`cbind(mean = apply(s, 2, mean), sd = apply(s, 2, pop_sd))`* 
+
 ## GGPlot Boxplots
 
 _Use {ggplot} to make boxplots of each of these variables by gender._
@@ -89,7 +91,7 @@ gender_age
 gender_zombies_killed
 gender_education
 ```
-
+`par()` doesn't work because that is in bbase r using graphs, these bad boys are grobs (lmao) so you need to use another package {gridExtra}
 
 ## GGPlot Scatterplots
 
@@ -105,6 +107,7 @@ weight_age #gonna be real here i used point instead of jitter because there were
   
 Height and age certainly have a correlation with height increasing with age. However, it appears that weight is highly variable among all ages.
 _Should we include a regression line? Some of my peers did but I think I can draw general conclusions from the graphs themselves._
+Totally fine to just observe the plots!
 
 ## Q-Q Plots
 
@@ -158,6 +161,14 @@ qqline(zombies$zombies_killed)
 Non-normal distribution for education.
 
 For the two non-normal q-q plot distribution I was very lost, I'm not sure how to determine the distribution based on only knowing it is not normal if that makes sense. I would guess Poisson for both since that is used for counting. For the zombies killed I can also see it being Bernoulli since the variable is either killed or not killed. I am fairly confident the both are considered cumulative however. 
+
+```{r compare}
+par(mfrow = c(1, 2))
+hist(zombies$zombies_killed, freq = F, probability = T)
+hist(zombies$years_of_education, freq = F, probability = T)
+hist(rpois(1000,3), probability = T)
+```
+This will help compare the histograms to show poisson distribution
 
 ## One Set of 30
 
@@ -226,7 +237,7 @@ Non-Normal using bootstrapping
 ```{r boots zoms killed}
 zomset <- NULL
 n <- 30 #adjusted to our original n
-for (i in 1:10000) { #the example in mod 7 uses 10000 and i can't see a reason to change it??
+for (i in 1:1000) { #the example in mod 7 uses 10000 and i can't see a reason to change it?? change it so its more like the original sample size
     zomset[i] <- mean(sample(zombies$zombies_killed, n, replace = FALSE))
 }
 quantile(zomset, c(0.025, 0.975)) #sweet! these are the 95th percentile
@@ -235,7 +246,7 @@ quantile(zomset, c(0.025, 0.975)) #sweet! these are the 95th percentile
 ```{r boots education}
 eduset <- NULL
 n <- 30 #adjusted to our original n
-for (i in 1:10000) { #the example in mod 7 uses 10000 and i can't see a reason to change it??
+for (i in 1:1000) { #changed to 1000 see above
     eduset[i] <- mean(sample(zombies$years_of_education, n, replace = FALSE))
 }
 quantile(eduset, c(0.025, 0.975))
@@ -267,7 +278,7 @@ Again I was missing the Calculations to go along with this but I'm not sure how 
 
 2. I am really unsure how to determine the type of distribution just going off the q-q plot. I understand how it shows that the distribution is non-normal but when it come to determining type, is there a q-q plot equivalent for each type of distribution?
 
-3. For the ggplots I was just picking ones that didn't require extra information so I'm not sure if they are the est suited, but I don' really understand the extra arguments for some of the geom_functions.
+3. For the ggplots I was just picking ones that didn't require extra information so I'm not sure if they are the best suited, but I don' really understand the extra arguments for some of the geom_functions.
 
 4. For picking a group I was really confused on how to get all of the columns included, I'm stuck with just going with `x = zombies$id` which just gave me a vector of integers. How can I sample the whole row?
 
