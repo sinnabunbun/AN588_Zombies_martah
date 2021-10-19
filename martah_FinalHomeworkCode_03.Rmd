@@ -49,6 +49,8 @@ pop.sd <- function(x) {
 }
 ```
 
+*good!*
+
 ```{r sd}
 pop.sd(zombies$height)
 pop.sd(zombies$weight)
@@ -106,6 +108,8 @@ weight_age #gonna be real here i used point instead of jitter because there were
 Height and age certainly have a correlation with height increasing with age. However, it appears that weight is highly variable among all ages.
 _Should we include a regression line? Some of my peers did but I think I can draw general conclusions from the graphs themselves._
 
+*you can generally see that they are both positively correlated but the lines just make it more clear (and believable) and easier to compare. You can add it using geom_smooth()*
+
 ## Q-Q Plots
 
 _Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not (hint: not all are drawn from the normal distribution)? For those that are not normal, can you determine from which common distribution they are drawn?_
@@ -158,6 +162,8 @@ qqline(zombies$zombies_killed)
 Non-normal distribution for education.
 
 For the two non-normal q-q plot distribution I was very lost, I'm not sure how to determine the distribution based on only knowing it is not normal if that makes sense. I would guess Poisson for both since that is used for counting. For the zombies killed I can also see it being Bernoulli since the variable is either killed or not killed. I am fairly confident the both are considered cumulative however. 
+
+*See the homework solutions for how to compare to other distribution histograms*
 
 ## One Set of 30
 
@@ -241,6 +247,8 @@ for (i in 1:10000) { #the example in mod 7 uses 10000 and i can't see a reason t
 quantile(eduset, c(0.025, 0.975))
 ```  
 
+*great!*
+
 ## One Hundred Sets of 30
 
 _Now draw 99 more random samples of 30 zombie apocalypse survivors, and calculate the mean for each variable for each of these samples. Together with the first sample you drew, you now have a set of 100 means for each variable (each based on 30 observations), which constitutes a sampling distribution for each variable. What are the means and standard deviations of this distribution of means for each variable? How do the standard deviations of means compare to the standard errors estimated in [5]? What do these sampling distributions look like (a graph might help here)? Are they normally distributed? What about for those variables that you concluded were not originally drawn from a normal distribution?_
@@ -260,15 +268,17 @@ s[[100]] #ok this works but i think there's another way because then these value
 
 Again I was missing the Calculations to go along with this but I'm not sure how to use a for loop to run a calculation?  
 
+*you are pulling ID when you take your samples, and you should take the variables (see code in homework to see what  mean). You don't need to put the equation in the loop, just use the loop to pull the samples and then do the basic equations as you have been. good work overall! -Mel *
+
 
 ## Challenges
 
 1. I had trouble viewing some of my data the way I wanted to. Some of the graphs I wanted plotted together with `par` which didn't always work. Also in a couple spots like at the top with mean I wanted to calculate all my variables at once and have it return different values but it did not like that.
 
-2. I am really unsure how to determine the type of distribution just going off the q-q plot. I understand how it shows that the distribution is non-normal but when it come to determining type, is there a q-q plot equivalent for each type of distribution?
+2. I am really unsure how to determine the type of distribution just going off the q-q plot. I understand how it shows that the distribution is non-normal but when it come to determining type, is there a q-q plot equivalent for each type of distribution? *I'm actually not sure about the qq plots but there definitely are histograms!*
 
-3. For the ggplots I was just picking ones that didn't require extra information so I'm not sure if they are the est suited, but I don' really understand the extra arguments for some of the geom_functions.
+3. For the ggplots I was just picking ones that didn't require extra information so I'm not sure if they are the est suited, but I don' really understand the extra arguments for some of the geom_functions. *This is helpful: https://ggplot2.tidyverse.org/reference/*
 
-4. For picking a group I was really confused on how to get all of the columns included, I'm stuck with just going with `x = zombies$id` which just gave me a vector of integers. How can I sample the whole row?
+4. For picking a group I was really confused on how to get all of the columns included, I'm stuck with just going with `x = zombies$id` which just gave me a vector of integers. How can I sample the whole row? *see my comment above*
 
 5. The for loooooooooooooops :,( ok honestly not hat bad I put this here preemptively thinking they would be harder lol. However, idk how to put in my own sample and enforce the replace = f because there's a good chance those people were picked again during the for loop since I put them in after replace = false. If I put it group1 first and have `i in 2:k` where k = 100 would that work?
